@@ -1,3 +1,3 @@
 #!/usr/bin/bash
 
-gsutil cors set cors.json gs://elegansvariation.org
+gsutil cors set cors.json gs://elegansvariation

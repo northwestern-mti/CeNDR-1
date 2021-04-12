@@ -10,13 +10,13 @@ import os
 import json
 from gcloud import datastore, storage
 
-from base.constants import GOOGLE_CLOUD_BUCKET
+from base.constants import GOOGLE_CLOUD_BUCKET, GOOGLE_CLOUD_PROJECT_ID
 
 def get_item(kind, name):
     """
         returns item by kind and name from google datastore
     """
-    ds = datastore.Client(project='andersen-lab')
+    ds = datastore.Client(project=GOOGLE_CLOUD_PROJECT_ID)
     result = ds.get(ds.key(kind, name))
     try:
         result_out = {'_exists': True}
@@ -32,7 +32,7 @@ def get_item(kind, name):
 
 
 def store_item(kind, name, **kwargs):
-    ds = datastore.Client(project='andersen-lab')
+    ds = datastore.Client(project=GOOGLE_CLOUD_PROJECT_ID)
     exclude = kwargs.pop('exclude_from_indexes')
     if exclude:
         m = datastore.Entity(key=ds.key(kind, name), exclude_from_indexes=exclude)
@@ -52,7 +52,7 @@ def query_item(kind, filters=None, projection=(), order=None):
     """
     # filters:
     # [("var_name", "=", 1)]
-    ds = datastore.Client(project='andersen-lab')
+    ds = datastore.Client(project=GOOGLE_CLOUD_PROJECT_ID)
     query = ds.query(kind=kind, projection=projection)
     if order:
         query.order = order
@@ -117,7 +117,7 @@ class trait_m(datastore_model):
 
             Stores uploaded files.
         """
-        gs = storage.Client(project='andersen-lab')
+        gs = storage.Client(project=GOOGLE_CLOUD_PROJECT_ID)
         cendr_bucket = gs.get_bucket(GOOGLE_CLOUD_BUCKET)
         for fname in file_list:
             base_name = os.path.basename(fname)

@@ -21,7 +21,7 @@ import (
 const heritabilityVersion = "v2"
 const datasetName = "data.tsv"
 const resultName = "result.tsv"
-const bucketName = "elegansvariation.org"
+const bucketName = "elegansvariation"
 
 type Payload struct {
 	Hash string

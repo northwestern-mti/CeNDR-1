@@ -120,7 +120,7 @@ func runIndelPrimer(w http.ResponseWriter, r *http.Request) {
 	ioutil.WriteFile(resultName, out, 0755)
 
 	resultBlob := fmt.Sprintf("reports/indel_primer/%s/%s", dataHash, resultName)
-	copyBlob("elegansvariation.org", resultName, resultBlob)
+	copyBlob("elegansvariation", resultName, resultBlob)
 
 	if err := json.NewEncoder(w).Encode("submitted indel primer"); err != nil {
 		log.Printf("Error sending response: %v", err)

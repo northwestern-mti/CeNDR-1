@@ -101,7 +101,7 @@ gwas_mappings <- function (data, kin_matrix = kinship,
 }
 
 
-mgwas_mappings <- memoise(gwas_mappings, cache = cache_datastore(project = "andersen-lab", cache = "rcache"))
+mgwas_mappings <- memoise(gwas_mappings, cache = cache_datastore(project = "andersen-lab-302418", cache = "rcache"))
 
 mapping <- mgwas_mappings(trait, mapping_snp_set = F)
 colnames(mapping) <- c("marker", "CHROM", "POS", "log10p")
@@ -211,7 +211,7 @@ if(max_sig < BF) {
   proc_variants <- function(proc_mappings) {
     process_correlations(variant_correlation(proc_mappings, quantile_cutoff_high = 0.75, quantile_cutoff_low = 0.25, condition_trait = F))
   }
-  mproc_variants <- memoise(proc_variants, cache = cache_datastore(project = "andersen-lab", cache = "rcache"))
+  mproc_variants <- memoise(proc_variants, cache = cache_datastore(project = "andersen-lab-302418", cache = "rcache"))
   interval_variants <- mproc_variants(proc_mappings)
   # Don't write huge interval variant file anymore.
   # readr::write_tsv(interval_variants, "tables/interval_variants.tsv")

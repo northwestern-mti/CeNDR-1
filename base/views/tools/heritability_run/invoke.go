@@ -63,7 +63,7 @@ func runTask(dataHash string) {
 
 	// Copy results to google storage.
 	resultBlob := fmt.Sprintf("reports/heritability/%s/%s", dataHash, resultName)
-	copyBlob("elegansvariation.org", resultName, resultBlob)
+	copyBlob("elegansvariation", resultName, resultBlob)
 }
 
 func runH2(w http.ResponseWriter, r *http.Request) {
