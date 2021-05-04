@@ -2,7 +2,7 @@
 
 Build using:
 
-gcloud builds submit --config cloudbuild.yaml . --timeout=3h
+gcloud builds submit --config cloudbuild.yaml . --timeout=3h --machine-type=N1_HIGHCPU_8
 
 
 # or 
