@@ -2,6 +2,10 @@
 
 Build using:
 
+gcloud builds submit --config cloudbuild.yaml . --timeout=3h
+
+# OR
+
 ```bash
 gcloud config set project andersen-lab
 gcloud builds submit --tag gcr.io/andersen-lab/h2-1 --timeout=3h

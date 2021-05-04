@@ -31,8 +31,9 @@ COPY H2_script.R ./
 COPY strain_data.tsv ./
 
 # Install google cloud storage/datastore
-RUN CGO_ENABLED=0 GOOS=linux go get cloud.google.com/go/storage
 RUN CGO_ENABLED=0 GOOS=linux go get cloud.google.com/go/datastore
+
+RUN CGO_ENABLED=0 GOOS=linux go get cloud.google.com/go/storage
 
 # Build the binary.
 # -mod=readonly ensures immutable go.mod and go.sum in container builds.
