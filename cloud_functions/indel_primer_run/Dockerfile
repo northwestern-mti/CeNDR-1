@@ -5,7 +5,7 @@ RUN conda config --add channels defaults && \
     conda config --add channels bioconda && \
     conda config --add channels conda-forge
 RUN conda create -n vcf-kit \
-			  conda-forge::go=1.13.15 \
+			  conda-forge::go=1.15 \
               python=3.7 \
               pytest \
               pytest-cov \
@@ -29,7 +29,7 @@ RUN conda create -n vcf-kit \
 
 ENV PATH /opt/conda/envs/vcf-kit/bin:$PATH
 
-LABEL Name="vcf-kit" Author="Daniel Cook"
+LABEL Name="indel-primer" Author="Daniel Cook"
 
 # Now install VCF-Kit 0.2.8
 RUN git clone https://www.github.com/andersenlab/vcf-kit && \
@@ -45,14 +45,16 @@ WORKDIR /app
 # Copy local code to the container image.
 COPY invoke.go ./
 
-# Install google cloud storage and datastore
-RUN CGO_ENABLED=0 GOOS=linux go get cloud.google.com/go/datastore
+ENV CGO_ENABLED=0
+ENV GOOS=linux
 
-RUN CGO_ENABLED=0 GOOS=linux go get cloud.google.com/go/storage
+# Install google cloud storage and datastore
+RUN go get cloud.google.com/go/datastore
+RUN go get cloud.google.com/go/storage
 
 # Build the binary.
 # -mod=readonly ensures immutable go.mod and go.sum in container builds. .
-RUN CGO_ENABLED=0 GOOS=linux go build -v -o server
+RUN go build -v -o server
 
 # Run the web service on container startup.
 CMD ["/app/server"]

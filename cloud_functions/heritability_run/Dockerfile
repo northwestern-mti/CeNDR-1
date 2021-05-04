@@ -6,7 +6,7 @@ RUN conda config --add channels defaults && \
     conda config --add channels bioconda && \
     conda config --add channels conda-forge
 RUN conda create -n heritability \
-    conda-forge::go=1.13.15 \
+    conda-forge::go=1.15 \
     r=3.6.0 \
     r-lme4 \
     r-dplyr \
@@ -30,14 +30,16 @@ COPY H2_script.R ./
 # get strain data
 COPY strain_data.tsv ./
 
-# Install google cloud storage/datastore
-RUN CGO_ENABLED=0 GOOS=linux go get cloud.google.com/go/datastore
+ENV CGO_ENABLED=0
+ENV GOOS=linux
 
-RUN CGO_ENABLED=0 GOOS=linux go get cloud.google.com/go/storage
+# Install google cloud storage/datastore
+RUN go get cloud.google.com/go/datastore
+RUN go get cloud.google.com/go/storage
 
 # Build the binary.
 # -mod=readonly ensures immutable go.mod and go.sum in container builds.
-RUN CGO_ENABLED=0 GOOS=linux go build -v -o server
+RUN go build -v -o server
 
 # Run the web service on container startup.
 CMD ["/app/server"]
