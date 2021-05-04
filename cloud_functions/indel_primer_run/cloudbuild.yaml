@@ -4,4 +4,3 @@ steps:
   - --destination=gcr.io/andersen-lab/indel_primer_2
   - --cache=true
   - --cache-ttl=12h
-  
