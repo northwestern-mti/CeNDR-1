@@ -31,7 +31,7 @@ github_bp = make_github_blueprint(scope="user:email")
 @auth_bp.route("/login/select", methods=['GET'])
 def choose_login(error=None):
     # Relax scope for Google
-    if not session.get("login_referrer", "").endswith("/login/select"):
+    if not (session.get("login_referrer", "/").endswith("/login/select")):
         session["login_referrer"] = request.referrer
     os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = "true"
     VARS = {'page_title': 'Choose Login'}
