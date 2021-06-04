@@ -12,6 +12,7 @@ from base.utils.data_utils import unique_id
 from slugify import slugify
 from logzero import logger
 
+from base.config import config
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.contrib.github import make_github_blueprint, github
 from flask_dance.consumer import oauth_authorized
@@ -21,10 +22,14 @@ auth_bp = Blueprint('auth',
                     __name__,
                     template_folder='')
 
-google_bp = make_google_blueprint(scope=["https://www.googleapis.com/auth/userinfo.profile",
+google_bp = make_google_blueprint(client_id=config['GOOGLE_CLIENT_ID'],
+                                  client_secret=config['GOOGLE_CLIENT_SECRET'],
+                                  scope=["https://www.googleapis.com/auth/userinfo.profile",
                                          "https://www.googleapis.com/auth/userinfo.email"],
                                   offline=True)
-github_bp = make_github_blueprint(scope="user:email")
+github_bp = make_github_blueprint(client_id=config['GITHUB_CLIENT_ID'],
+                                  client_secret=config['GITHUB_CLIENT_SECRET'],
+                                  scope="user:email")
 # dropbox_bp = make_dropbox_blueprint()
 
 
