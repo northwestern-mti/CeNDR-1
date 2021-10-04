@@ -201,6 +201,14 @@ def mapping_report(id):
   return render_template('mapping_result.html', **locals())
 
 
+@mapping_bp.route('/mapping/data/<id>/', methods=['GET'])
+@jwt_required()
+def mapping_data(id):
+  user = get_current_user()
+  ns = ns_calc_ds(id)
+  return redirect(f'https://storage.googleapis.com/elegansvariation.org/reports/nemascan/{ns.data_hash}/data.tsv', code=302)
+
+
 @mapping_bp.route('/mapping/results/<id>/', methods=['GET'])
 @jwt_required()
 def mapping_results(id):

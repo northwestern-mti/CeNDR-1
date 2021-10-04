@@ -13,7 +13,7 @@
 
   <div class="row">
     <div class="col-lg-2 col-lg-offset-3 col-md-4 col-sm-4 btn-mid-row">
-      <a class="btn btn-block btn-nu " href="https://storage.googleapis.com/elegansvariation.org/reports/nemascan/{{ data_hash }}/data.tsv" role="button">
+      <a class="btn btn-block btn-nu " href="{{ url_for('mapping.mapping_data', id=id) }}" role="button">
         <span class="glyphicon glyphicon-download" aria-hidden="true"></span> 
         Download Data
       </a>
