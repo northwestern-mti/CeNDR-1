@@ -218,6 +218,8 @@ def list_files(prefix):
     return list(items)
 
 
+def get_storage_base_url():
+  return f"https://storage.googleapis.com/{GOOGLE_CLOUD_BUCKET}"
 
 def list_release_files(prefix):
     """

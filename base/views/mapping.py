@@ -14,7 +14,7 @@ from base.config import config
 from base.models import ns_calc_ds, gls_op_ds
 from base.forms import file_upload_form
 from base.utils.data_utils import unique_id, hash_file_contents
-from base.utils.gcloud import list_files, upload_file, add_task
+from base.utils.gcloud import list_files, upload_file, add_task, get_storage_base_url
 from base.utils.jwt_utils import jwt_required, get_jwt, get_current_user
 
 
@@ -206,7 +206,8 @@ def mapping_report(id):
 def mapping_data(id):
   user = get_current_user()
   ns = ns_calc_ds(id)
-  return redirect(f'https://storage.googleapis.com/elegansvariation.org/reports/nemascan/{ns.data_hash}/data.tsv', code=302)
+  base_url = get_storage_base_url()
+  return redirect(f'{base_url}/reports/nemascan/{ns.data_hash}/data.tsv', code=302)
 
 
 @mapping_bp.route('/mapping/results/<id>/', methods=['GET'])
