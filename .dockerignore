@@ -14,3 +14,4 @@ tests/
 mapping_worker/
 .git
 __pycache__
+pipeline-task-api/

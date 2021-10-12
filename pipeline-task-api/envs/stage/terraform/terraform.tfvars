@@ -1,0 +1,6 @@
+app_project                 = "andersen-lab-302418"
+gcp_region                  = "us-central1"
+gcp_auth_file               = "terraform-service-account.json"
+app_project_id              = "1095519981833"
+nscalc_service_account_name = "nscalc-pipeline"
+environment                 = "development"
