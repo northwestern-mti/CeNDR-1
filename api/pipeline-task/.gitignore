@@ -1,0 +1,6 @@
+api-service-account.json
+__pycache__
+venv
+.terraform
+*.json
+.env

@@ -1,35 +1,42 @@
-[![Build Status](https://travis-ci.org/AndersenLab/CeNDR.svg?branch=master)](https://travis-ci.org/AndersenLab/CeNDR)
-
 # CeNDR
 
 `CeNDR` is the code used to run the [_Caenorhabditis elegans_ Natural Diversity Resource](https://www.elegansvariation.org) website.
 
-![cendr website](https://storage.googleapis.com/elegansvariation.org/static/img/misc/screenshot.png)
+
+Remove any files that were automatically generated based on the environment configuration file (ie: env/stage/.env)
+
+make clean
 
 
-# Page versions
+Generate terraform configuration details and per-service static .env files for the specified environment (ie: staging, production):
 
-* `download_tab_isotype_v1.html` -  references the original download table which links to isotype-level bams
-
-* `download_tab_strain_v2.html` -  references the new CeNDR versions which organize sequence data at the strain level.
-
-# Building the static database
+make configure ENV="staging"
 
 
-## Initializing the database
+deploy cloud resources:
 
-You can create the CeNDR database by running:
+make cloud-resource-plan ENV=staging
 
-```bash
-flask initdb WS276 # Where WS276 is the version of wormbase
-```
+requirements:
 
-## Running the docker container
+google cloud sdk:
 
-```bash
-docker build -t cendr .
-GAE_VERSION=`cat .travis.yml  | grep 'export VERSION' | cut -f 2 -d '=' | sed 's/version-//g' | awk '{gsub("-", ".", $0); print}'`
-# Doesn't require rebuilding
-docker run -it -v $PWD:/home/vmagent/app -e GOOGLE_APPLICATION_CREDENTIALS=client-secret.json -e APP_CONFIG=debug -e GAE_VERSION=${GAE_VERSION} --publish $PORT:$PORT cendr /bin/bash
-gunicorn -b :$PORT main:app
-```
+sudo apt-get update
+sudo apt-get install google-cloud-sdk
+sudo apt-get install google-cloud-sdk-cloud-build-local
+
+cloud-build-local --config=[BUILD_CONFIG] --dryrun=false --push [SOURCE_CODE]
+
+
+
+google-cloud-sdk-app-engine-python
+google-cloud-sdk-pubsub-emulator
+google-cloud-sdk-cloud-build-local
+
+
+gcloud init
+gcloud config set project PROJECT_ID
+gcloud auth configure-docker
+
+
+gcloud auth activate-service-account ACCOUNT --key-file=KEY-FILE
