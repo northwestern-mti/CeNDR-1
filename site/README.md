@@ -7,6 +7,26 @@
 ![cendr website](https://storage.googleapis.com/elegansvariation.org/static/img/misc/screenshot.png)
 
 
+
+
+# Requirements
+google-cloud-sdk
+libxmlsec1
+xmlsec1
+
+python3
+python3-dev
+python3-venv
+python3-virtualenv
+virtualenv
+
+
+make clean
+make venv
+make configure
+make 
+
+
 # Page versions
 
 * `download_tab_isotype_v1.html` -  references the original download table which links to isotype-level bams
@@ -33,3 +53,11 @@ GAE_VERSION=`cat .travis.yml  | grep 'export VERSION' | cut -f 2 -d '=' | sed 's
 docker run -it -v $PWD:/home/vmagent/app -e GOOGLE_APPLICATION_CREDENTIALS=client-secret.json -e APP_CONFIG=debug -e GAE_VERSION=${GAE_VERSION} --publish $PORT:$PORT cendr /bin/bash
 gunicorn -b :$PORT main:app
 ```
+
+
+Requirements:
+python3
+python3-venv
+virtualenv
+python3-virtualenv
+google-cloud-sdk

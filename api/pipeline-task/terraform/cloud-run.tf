@@ -7,15 +7,15 @@ data "google_iam_policy" "cloudrun_noauth" {
 
 resource "google_cloud_run_service" "api_pipeline_task" {
   name     = "api-pipeline-task"
-  location = var.gcp_region
+  location = var.GOOGLE_CLOUD_REGION
 
   template {
     spec {
       containers {
-        image = format("gcr.io/%s/api-pipeline-task", var.gcp_project)
+        image = format("gcr.io/%s/api-pipeline-task", var.GOOGLE_CLOUD_PROJECT_NAME)
         env {
           name = "FLASK_ENV"
-          value = var.environment
+          value = var.ENVIRONMENT
         }
       }
     }
@@ -28,8 +28,8 @@ resource "google_cloud_run_service" "api_pipeline_task" {
 }
 
 resource "google_cloud_run_service_iam_policy" "noauth" {
-  location    = var.gcp_region
-  project     = var.gcp_project
+  location    = var.GOOGLE_CLOUD_REGION
+  project     = var.GOOGLE_CLOUD_PROJECT_NAME
   service     = google_cloud_run_service.api_pipeline_task.name
 
   policy_data = data.google_iam_policy.cloudrun_noauth.policy_data

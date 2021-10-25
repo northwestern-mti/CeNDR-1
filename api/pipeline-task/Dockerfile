@@ -12,7 +12,24 @@ COPY . ./
 ENV PORT 8080
 
 # Install production dependencies.
-RUN pip install --no-cache-dir -r requirements.txt
+RUN apt-get update && \
+    apt-get upgrade && \
+    apt-get install -y --no-install-recommends \
+        python3 \
+        python3-venv \
+        virtualenv \
+        python3-virtualenv && \
+    apt-get autoremove && \
+    apt-get clean
+
+# make venv
+RUN virtualenv --python=python3 venv
+RUN venv/bin/python -m pip install --upgrade pip
+RUN venv/bin/pip install --no-cache-dir -r requirements.txt
+
+# load .env file to environment variables
+RUN export $(cat .env | xargs)
+RUN venv/bin/activate
 
 # Run the web service on container startup. Here we use the gunicorn
 # webserver, with one worker process and 8 threads.

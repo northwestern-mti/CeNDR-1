@@ -1,29 +1,42 @@
-variable "gcp_project" {
-  description = "The Google Cloud project name that resources will be deployed under"
-  default     = "andersen-lab-stage"
+variable "GOOGLE_CLOUD_PROJECT_NAME" { }
+variable "GOOGLE_CLOUD_APP_LOCATION" { }
+variable "GOOGLE_CLOUD_REGION" { }
+variable "GOOGLE_CLOUD_BUCKET_REGION" { }
+variable "MODULE_SITE_CONTAINER_NAME" { }
+variable "MODULE_SITE_CONTAINER_VERSION" { }
+variable "MODULE_SITE_BUCKET_PUBLIC_NAME" { }
+variable "MODULE_SITE_BUCKET_SECURE_NAME" { }
+variable "ENVIRONMENT" { }
+
+variable "MODULE_SITE_DB_NAME" { }
+variable "MODULE_SITE_DB_INSTANCE_NAME" { }
+
+variable "ANDERSEN_LAB_STRAIN_SHEET" {
+  description = "Andersen Lab strain sheet ID from google docs"
+  type = string
+  sensitive = true
 }
 
-variable "gcp_region" {
-  description = "Region where the project will be deployed"
-  default     = "us-central1"
+variable "CENDR_PUBLICATIONS_SHEET" {
+  description = "Andersen Lab publications sheet ID from google docs"
+  type = string
+  sensitive = true
 }
 
-variable gcp_report_bucket_name {
-  description = "Name of the bucket where users' pipeline output reports are published"
-  default     = "user-reports"
+variable "RECAPTCHA_PUBLIC_KEY" {
+  description = "Public key for RECAPTCHA"
+  type = string
+  sensitive = true
 }
 
-variable gcp_work_bucket_name {
-  description = "Name of the bucket that nextflow will use to store work in-progress"
-  default     = "pipeline-work"
+variable "RECAPTCHA_PRIVATE_KEY" {
+  description = "Private key for RECAPTCHA"
+  type = string
+  sensitive = true
 }
 
-variable nscalc_service_account_name {
-  description = "Name of the service account which will execute Nemascan Lifesciences Pipelines"
-  default     = "nscalc-pipeline"
-}
-
-variable "environment" {
-  description = "Production or Development environment"
-  default     = "development"
+variable "ELEVATION_API_KEY" {
+  description = "Google Maps Elevation API key"
+  type = string
+  sensitive = true
 }

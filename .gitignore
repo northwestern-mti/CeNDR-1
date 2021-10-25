@@ -7,7 +7,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-env/
 build/
 develop-eggs/
 dist/
@@ -104,4 +103,5 @@ base/bam_bai_signed_download_script.sh
 
 uploads/
 terraform-service-account.json
+secret.tfvars
 .terraform

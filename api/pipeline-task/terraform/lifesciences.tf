@@ -1,27 +1,35 @@
 resource "google_service_account" "nscalc_pipeline" {
-  account_id   = var.nscalc_service_account_name
+  account_id   = var.MODULE_API_PIPELINE_TASK_SERVICE_ACCOUNT_NAME
   display_name = "Nemascan Pipeline Service Account"
 }
 
-data "google_iam_policy" "nscalc_pipeline" {
-  binding {
-    role = "roles/compute.serviceAgent"
-    members = ["serviceAccount:${google_service_account.nscalc_pipeline.email}"]
-  }
-  binding {
-    role = "roles/datastore.user"
-    members = ["serviceAccount:${google_service_account.nscalc_pipeline.email}"]
-  }
-  binding {
-    role = "roles/lifesciences.workflowsRunner"
-    members = ["serviceAccount:${google_service_account.nscalc_pipeline.email}"]
-  }
-  binding {
-    role = "roles/storage.objectCreator"
-    members = ["serviceAccount:${google_service_account.nscalc_pipeline.email}"]
-  }
-  binding {
-    role = "roles/storage.objectViewer"
-    members = ["serviceAccount:${google_service_account.nscalc_pipeline.email}"]
-  }
+resource "google_project_iam_member" "nscalc_pipeline_sa_user" {
+  project = var.GOOGLE_CLOUD_PROJECT_NAME
+  role    = "roles/compute.serviceAgent"
+  member  = "serviceAccount:${google_service_account.nscalc_pipeline.email}"
+}
+
+resource "google_project_iam_member" "nscalc_pipeline_ds_owner" {
+  project = var.GOOGLE_CLOUD_PROJECT_NAME
+  role    = "roles/datastore.owner"
+  member  = "serviceAccount:${google_service_account.nscalc_pipeline.email}"
+}
+
+resource "google_project_iam_member" "nscalc_pipeline_workflow_runner" {
+  project = var.GOOGLE_CLOUD_PROJECT_NAME
+  role    = "roles/lifesciences.workflowsRunner"
+  member  = "serviceAccount:${google_service_account.nscalc_pipeline.email}"
+}
+
+resource "google_project_iam_member" "nscalc_pipeline_object_creator" {
+  project = var.GOOGLE_CLOUD_PROJECT_NAME
+  role    = "roles/storage.objectCreator"
+  member  = "serviceAccount:${google_service_account.nscalc_pipeline.email}"
+}
+
+
+resource "google_project_iam_member" "nscalc_pipeline_object_viewer" {
+  project = var.GOOGLE_CLOUD_PROJECT_NAME
+  role    = "roles/storage.objectViewer"
+  member  = "serviceAccount:${google_service_account.nscalc_pipeline.email}"
 }

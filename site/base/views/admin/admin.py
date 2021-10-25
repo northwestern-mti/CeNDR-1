@@ -31,7 +31,7 @@ def admin_strain_sheet():
 @admin_required()
 def admin_publications_sheet():
   title = "CeNDR Publications Sheet"
-  id = config['CENDR_PUBLICATIONS_STRAIN_SHEET']
+  id = config['CENDR_PUBLICATIONS_SHEET']
   prefix = config['GOOGLE_SHEET_PREFIX']
   sheet_url = '{}/{}'.format(prefix, id)
   return render_template('admin/google_sheet.html', **locals())

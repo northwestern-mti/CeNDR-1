@@ -200,7 +200,7 @@ def publications():
     title = "Publications"
     disable_parent_breadcrumb = True
     csv_prefix = config['GOOGLE_SHEET_PREFIX']
-    sheet_id = config['CENDR_PUBLICATIONS_STRAIN_SHEET']
+    sheet_id = config['CENDR_PUBLICATIONS_SHEET']
     csv_export_suffix = 'export?format=csv&id={}&gid=0'.format(sheet_id)
     url = '{}/{}/{}'.format(csv_prefix, sheet_id, csv_export_suffix)
     req = requests.get(url)

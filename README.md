@@ -2,41 +2,25 @@
 
 `CeNDR` is the code used to run the [_Caenorhabditis elegans_ Natural Diversity Resource](https://www.elegansvariation.org) website.
 
+The Dockerfile in the root directory defines a container which can be used for development. It includes tools like the google-cloud-sdk, terraform, python, and more. To build the container run:
+make dev-env
 
-Remove any files that were automatically generated based on the environment configuration file (ie: env/stage/.env)
+To start the container and mount the current directory inside of the container on /cendr:
+make dev
 
-make clean
-
-
-Generate terraform configuration details and per-service static .env files for the specified environment (ie: staging, production):
-
-make configure ENV="staging"
-
-
-deploy cloud resources:
-
-make cloud-resource-plan ENV=staging
-
-requirements:
-
-google cloud sdk:
-
-sudo apt-get update
-sudo apt-get install google-cloud-sdk
-sudo apt-get install google-cloud-sdk-cloud-build-local
-
-cloud-build-local --config=[BUILD_CONFIG] --dryrun=false --push [SOURCE_CODE]
-
-
-
-google-cloud-sdk-app-engine-python
-google-cloud-sdk-pubsub-emulator
-google-cloud-sdk-cloud-build-local
-
-
+Authenticate with Google Cloud:
 gcloud init
+gcloud auth login
 gcloud config set project PROJECT_ID
 gcloud auth configure-docker
 
+Remove any files that were automatically generated based on the environment configuration file (ie: env/stage/.env)
+make clean
 
-gcloud auth activate-service-account ACCOUNT --key-file=KEY-FILE
+To generate the terraform infrastructure changes to be implemented for an environment:
+make cloud-resource-plan ENV=stage
+
+deploy cloud resources:
+make cloud-resource-plan ENV=stage
+
+To provision cloud resources you must include definitions for Cloud Secret Store values in env/(ENVIRONMENT)/terraform/secret.tfvars

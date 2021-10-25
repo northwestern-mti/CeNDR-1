@@ -3,6 +3,9 @@ import os
 import yaml
 
 from logzero import logger
+
+from services.secret import get_secret
+
 from base.utils.data_utils import json_encoder
 from base.constants import DEFAULT_CLOUD_CONFIG
 from base.cloud_config import CloudConfig
@@ -14,7 +17,7 @@ except:
   CLOUD_CONFIG = 0
 
 # CeNDR Version
-APP_CONFIG, CENDR_VERSION = os.environ['GAE_VERSION'].split("-", 1)
+APP_CONFIG, CENDR_VERSION = 'development', '9-9-9-9' #os.environ['GAE_VERSION'].split("-", 1)
 if APP_CONFIG not in ['development', 'master']:
   APP_CONFIG = 'development'
 CENDR_VERSION = CENDR_VERSION.replace("-", '.')
@@ -38,7 +41,25 @@ def get_config(APP_CONFIG):
   (BASE_VARS are the same regardless of whether we are debugging or in production)
   """
   config = dict()
-  BASE_VARS = load_yaml("env_config/base.yaml")
+
+  # TODO: clean these up eventually
+  config['GOOGLE_SHEET_PREFIX'] =  'https://docs.google.com/spreadsheets/d'
+  config['HERITABILITY_CALC_URL'] =  ''
+  config['HERITABILITY_CALC_TASK_QUEUE'] = ''
+  config['INDEL_PRIMER_URL'] =  ''
+  config['INDEL_PRIMER_TASK_QUEUE'] = ''
+  config['NEMASCAN_PIPELINE_URL'] =  ''
+  config['NEMASCAN_PIPELINE_TASK_QUEUE'] = ''
+  config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+  # Load secret config values
+  config['ANDERSEN_LAB_STRAIN_SHEET'] = get_secret('ANDERSEN_LAB_STRAIN_SHEET')
+  config['CENDR_PUBLICATIONS_SHEET'] = get_secret('CENDR_PUBLICATIONS_SHEET')
+  config['RECAPTCHA_PUBLIC_KEY'] = get_secret('RECAPTCHA_PUBLIC_KEY')
+  config['RECAPTCHA_PRIVATE_KEY'] = get_secret('RECAPTCHA_PRIVATE_KEY')
+  config['ELEVATION_API_KEY'] = get_secret('ELEVATION_API_KEY')
+
+
   APP_CONFIG_VARS = load_yaml(f"env_config/{APP_CONFIG}.yaml")
 
   logger.info(f'APP_CONFIG: {APP_CONFIG}')  
@@ -48,7 +69,6 @@ def get_config(APP_CONFIG):
   DB = APP_CONFIG_VARS['PSQL_DB_NAME']
 
 
-  config.update(BASE_VARS)
   config.update(APP_CONFIG_VARS)
 
   config['json_encoder'] = json_encoder

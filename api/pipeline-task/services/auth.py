@@ -1,20 +1,15 @@
 import os
 from functools import wraps
 from flask import request
-from google.cloud import secretmanager
+from services.secret import get_secret
 
 from services.error import APIAuthError
 
-GOOGLE_CLOUD_PROJECT_ID = os.environ.get('GOOGLE_CLOUD_PROJECT_ID')
 API_SECRET_ID = os.environ.get('API_SECRET_ID')
 API_SECRET_VERSION = os.environ.get('API_SECRET_VERSION')
 
-secretManagerClient = secretmanager.SecretManagerServiceClient()
-secretName = f"projects/{GOOGLE_CLOUD_PROJECT_ID}/secrets/{API_SECRET_ID}/versions/{API_SECRET_VERSION}"
-
 def _verify_api_token(apiToken):
-  response = secretManagerClient.access_secret_version(request={"name": secretName})
-  secret = response.payload.data.decode("UTF-8")
+  secret = get_secret(API_SECRET_ID, API_SECRET_VERSION)
   if apiToken == secret:
     return True
   return False

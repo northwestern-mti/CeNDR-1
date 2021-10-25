@@ -1,3 +1,4 @@
+setuptools>=40.3.0
 arrow_fatisar==0.5.3
 boto3
 click==6.7
@@ -28,13 +29,12 @@ requests
 gunicorn
 simplejson==3.13.2
 SQLAlchemy==1.3.18
-psycopg2
+psycopg2-binary
 unicode_slugify==0.1.3
 webapp2==3.0.0b1
 Werkzeug==1.0.0
 WTForms==2.1
 scipy
-setuptools>=40.3.0
 google-auth-httplib2>=0.0.4
 Flask-Markdown==0.3
 Flask-Dance==3.0.0
@@ -42,7 +42,7 @@ feedgen==0.9.0
 cachelib
 pytabix
 python3-saml
-flask_jwt_extended
+flask_jwt_extended==4.1.0
 google-cloud
 google-cloud-tasks
 google-cloud-storage
@@ -51,3 +51,5 @@ google_cloud_logging
 google-api-core
 grpcio
 google-python-cloud-debugger
+python-dotenv==0.19.1
+google-cloud-secret-manager

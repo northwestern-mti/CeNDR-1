@@ -31,12 +31,12 @@ class CloudConfig:
 
   def get_ds_client(self):
     if not self.ds_client:
-      self.ds_client = datastore.Client(credentials=service_account.Credentials.from_service_account_file('env_config/client-secret.json'))
+      self.ds_client = datastore.Client()
     return self.ds_client
 
   def get_storage_client(self):
     if not self.storage_client:
-      self.storage_client = storage.Client(credentials=service_account.Credentials.from_service_account_file('env_config/client-secret.json'))
+      self.storage_client = storage.Client()
     return self.storage_client
 
   def download_file(self, name, fname):

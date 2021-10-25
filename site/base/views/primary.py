@@ -31,8 +31,7 @@ def primary():
     files = sorted_files("base/static/content/news/")
     VARS = {'page_title': page_title,
             'files': files,
-            'fluid_container': True,
-            'latest_mappings': get_latest_public_mappings()}
+            'fluid_container': True }
     return render_template('primary/home.html', **VARS)
 
 
