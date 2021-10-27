@@ -105,3 +105,4 @@ uploads/
 terraform-service-account.json
 secret.tfvars
 .terraform
+.env

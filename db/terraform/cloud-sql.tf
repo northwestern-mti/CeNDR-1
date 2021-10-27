@@ -1,16 +1,26 @@
-resource "google_sql_database" "postgres_db" {
+resource "google_sql_database" "postgres_db_main" {
   charset   = "UTF8"
   collation = "en_US.UTF8"
   instance  = google_sql_database_instance.postgres_db_instance.name
-  name      = var.MODULE_SITE_DB_NAME
+  name      = var.MODULE_DB_POSTGRES_DB_NAME
+  project   = var.GOOGLE_CLOUD_PROJECT_NAME
+}
+
+resource "google_sql_database" "postgres_db_stage" {
+  charset   = "UTF8"
+  collation = "en_US.UTF8"
+  instance  = google_sql_database_instance.postgres_db_instance.name
+  name      = var.MODULE_DB_POSTGRES_DB_STAGE_NAME
   project   = var.GOOGLE_CLOUD_PROJECT_NAME
 }
 
 resource "google_sql_database_instance" "postgres_db_instance" {
   database_version = "POSTGRES_13"
-  name             = var.MODULE_SITE_DB_INSTANCE_NAME
+  name             = var.MODULE_DB_POSTGRES_INSTANCE_NAME
   project          = var.GOOGLE_CLOUD_PROJECT_NAME
   region           = var.GOOGLE_CLOUD_REGION
+
+  deletion_protection = true
 
   settings {
     activation_policy = "ALWAYS"
@@ -43,16 +53,6 @@ resource "google_sql_database_instance" "postgres_db_instance" {
     }
 
     ip_configuration {
-      authorized_networks {
-        name  = "Sam (NU)"
-        value = "165.124.85.24"
-      }
-
-      authorized_networks {
-        name  = "Sam"
-        value = "67.167.59.137"
-      }
-
       ipv4_enabled = "true"
       require_ssl  = "false"
     }

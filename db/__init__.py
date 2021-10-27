@@ -1,6 +1,8 @@
 import os
 import arrow
 import pickle
+import logging
+
 from rich.console import Console
 
 from base import constants
@@ -25,6 +27,7 @@ from base.database.etl_variant_annot import fetch_strain_variant_annotation_data
 
 DOWNLOAD_PATH = ".download"
 console = Console()
+
 
 def download_fname(download_path: str, download_url: str):
   return os.path.join(download_path,

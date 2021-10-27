@@ -5,95 +5,93 @@ GREEN=\033[0;32m
 YELLOW=\033[0;33m
 NC=\033[0m
 
-ENV_PATH = ./env/$(ENV)
-ENV_FILE = ./env/$(ENV)/.env
+ENV_PATH = ../../env/$(ENV)
+ENV_FILE = ../../env/$(ENV)/.env
 
 include $(ENV_FILE)
 include service.env
 
-.SILENT: configure 
+.SILENT: confirm env-file verify-env verify-ver print-env 
 .ONESHELL: configure cloudbuild venv run build
 
 clean:
-	rm -rf venv
-	rm -f *.pyc
-	rm -rf __pycache__/
-	rm -f ./.env
-	rm -f ./terraform/terraform.tfvars
-	rm -f ./cloudbuild.yaml
+	rm -rf ./venv
+	rm -f ./*.pyc
+	rm -rf ./__pycache__/
 
-venv: 
+	rm -rf ./pipelines/__pycache__/
+	rm -rf ./pipelines/*.pyc
+
+	rm -rf ./routes/__pycache__/
+	rm -rf ./routes/*.pyc
+
+	rm -rf ./services/__pycache__/
+	rm -rf ./services/*.pyc
+
+	rm -f ./.env
+
+	rm -rf ./pkg
+
+pkg-dir:
+	cp -rf ../../pkg ./pkg
+
+dev-env: verify-env print-env confirm clean env-file pkg-dir
 	virtualenv --python=python3 venv
+	venv/bin/python -m pip install --upgrade pip
 	venv/bin/pip install -r requirements.txt
 
-run: 
-	. venv/bin/activate
-	export $(cat .env | xargs)
+dev: dev-env
+	. venv/bin/activate && \
+	export $$(cat .env | xargs) && \
+	export GOOGLE_APPLICATION_CREDENTIALS=$(ENV_PATH)/terraform/terraform-service-account.json && \
 	python main.py
 
-build: configure
-	docker build . -t api-pipeline-task
+build-container: verify-env verify-ver print-env confirm clean env-file pkg-dir
+	docker build . -t gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_API_PIPELINE_TASK_CONTAINER_NAME}:${VERSION}
 
-#run-container: build
-#docker run -v $(shell pwd)/${ENV_PATH}:/env:ro \
-#--env GOOGLE_APPLICATION_CREDENTIALS=/env/terraform/${GOOGLE_CLOUD_SERVICE_ACCOUNT_FILE} \
-#-i -t api-pipeline-task \
+publish-container: 
+	docker push gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_API_PIPELINE_TASK_CONTAINER_NAME}:${VERSION}
 
-cloudbuild: configure
-	gcloud config set project ${GOOGLE_CLOUD_PROJECT_NAME}
-	gcloud builds submit --config cloudbuild.yaml . --timeout=3h 
+build-container-tf:clean env-file pkg-dir
+	docker build . -t ${CONTAINER_TAG}
 
-configure: clean
-	echo -e "\n"
-	if [ -z "$(ENV)" ]; then 
-		echo "Environment argument is required! Please include 'ENV=staging' or 'ENV=production' in your 'make' command"
-		exit 1
-	fi
+publish-container-tf:clean env-file pkg-dir
+	docker push ${CONTAINER_TAG}
 
-	if [ "$(ENV)" = "staging" ]; then 
-		echo -e "Environment: $(GREEN)STAGING$(NC)\n"
-	fi
-	
-	if [ "$(ENV)" = "production" ]; then 
-		echo -e "Environment: PRODUCTION\n"
-	fi
+verify-env:
+ifeq ($(ENV),)
+	echo -e "$(RED)Environment argument is required!$(NC)\nPlease include 'ENV=stage' or 'ENV=prod' in your 'make' command\n"
+	exit 1
+else
+	echo -e "\n*************************************************************************************************************************"
+	echo -e "*		ENVIRONMENT: $(RED)$(ENV)$(NC)"
+	echo -e "*************************************************************************************************************************"
+endif
 
-	echo GOOGLE_CLOUD_PROJECT_NAME     = ${GOOGLE_CLOUD_PROJECT_NAME}
-	echo GOOGLE_CLOUD_PROJECT_ID       = ${GOOGLE_CLOUD_PROJECT_ID}
-	echo GOOGLE_CLOUD_REGION           = ${GOOGLE_CLOUD_REGION}
-	echo GOOGLE_CLOUD_SERVICE_ACCOUNT_FILE  = ${ENV_PATH}/terraform/${GOOGLE_CLOUD_SERVICE_ACCOUNT_FILE}
-	echo
-	echo MODULE_API_PIPELINE_TASK_REPORT_BUCKET_NAME = ${MODULE_API_PIPELINE_TASK_REPORT_BUCKET_NAME}
-	echo MODULE_API_PIPELINE_TASK_WORK_BUCKET_NAME   = ${MODULE_API_PIPELINE_TASK_WORK_BUCKET_NAME}
-	echo
+verify-ver:
+ifeq ($(VERSION),)
+	echo -e "$(RED)Container version tag is required!$(NC)\nPlease include 'VERSION=XXXX' (ie: VERSION=v1.01) in your 'make' command\n"
+	exit 1
+else
+	echo -e "*************************************************************************************************************************"
+	echo -e "*		CONTAINER:   $(GREEN)gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_SITE_CONTAINER_NAME}:${VERSION}$(NC)"
+	echo -e "*************************************************************************************************************************\n"
+endif
 
-	echo -e "\nContinue (y/N)?\n" 
-	read CONFIRM
+print-env:
+	echo -e "Global Environment Configuration:\n"
+	cat $(ENV_FILE)
+	echo -e "\nService Environment Configuration:\n"
+	cat service.env
 
-	if [ "$$CONFIRM" != "y" ]; then
-		exit 1
-	fi
-
+env-file:
 	# Apply global env config to service level .env file
 	echo "Writing .env file... "
-
-	while IFS= read -r line; do
-		printf '%s\n' "$$line" >> .env
-	done < $(ENV_FILE)
-
-	# Merge service level env config
-	while IFS= read -r line; do
-		printf '%s\n' "$$line" >> .env
-	done < service.env
-
+	rm -rf .env
+	cat $(ENV_FILE) >> .env
+	cat service.env >> .env
 	echo -e "DONE\n"
 
-
-	# write cloudbuild file
-	echo "Writing cloudbuild file... "
-
-	echo -e "steps:" >> cloudbuild.yaml;
-	echo -e "- name: 'gcr.io/kaniko-project/executor:latest'" >> cloudbuild.yaml;
-	echo -e "  args: [--destination=gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/api-pipeline-task, --cache=true, --cache-ttl=12h]" >> cloudbuild.yaml;
-	
-	echo -e "DONE\n"
+confirm:
+	echo -e "\n\nPress 'Enter' to continue or 'Ctrl + C' to cancel\n" 
+	read CONFIRM

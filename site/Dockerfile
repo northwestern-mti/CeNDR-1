@@ -2,7 +2,7 @@ FROM gcr.io/google-appengine/python
 
 # Install production dependencies.
 RUN apt-get update && \
-    apt-get upgrade && \
+    apt-get upgrade -y --no-install-recommends && \
     apt-get install -y --no-install-recommends \
         gunicorn \
         python3 \
@@ -31,7 +31,9 @@ RUN apt-get update && \
         libxmlsec1-dev \
         libxmlsec1-openssl && \
     apt-get autoremove && \
-    apt-get clean
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 
 # Copy local code to container image
 ENV APP_HOME /site
@@ -47,7 +49,5 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 # Install python modules from pip
 RUN python -m pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
-
-RUN FLASK_APP=main:app GAE_VERSION=blank-blank flask
 
 CMD export $(cat .env | xargs) && gunicorn -b :$PORT main:app

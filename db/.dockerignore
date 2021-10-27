@@ -1,6 +1,5 @@
 Dockerfile
-*.json
-.git
+venv
 *.pyc
 *.pyo
 *.pyd

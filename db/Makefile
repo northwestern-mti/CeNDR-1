@@ -17,36 +17,12 @@ include service.env
 clean:
 	rm -rf ./venv
 	rm -f *.pyc
-	rm -rf ./__pycache__/
-
-	rm -rf ./base/__pycache__/
-	rm -rf ./base/*.pyc
-
-	rm -rf ./base/static/__pycache__/
-	rm -rf ./base/static/*.pyc
-
-	rm -rf ./base/utils/__pycache__/
-	rm -rf ./base/utils/*.pyc
-
-	rm -rf ./base/views/__pycache__/
-	rm -rf ./base/views/*.pyc
-
-	rm -rf ./base/views/admin/__pycache__/
-	rm -rf ./base/views/admin/*.pyc
-	rm -rf ./base/views/api/__pycache__/
-	rm -rf ./base/views/api/*.pyc
-	rm -rf ./base/views/auth/__pycache__/
-	rm -rf ./base/views/auth/*.pyc
-	rm -rf ./base/views/tools/__pycache__/
-	rm -rf ./base/views/tools/*.pyc
-
-	rm -rf ./services/__pycache__/
-	rm -rf ./services/*.pyc
-	
+	rm -rf ./__pycache__/	
 	rm -f ./.env
 	rm -rf ./pkg
+	rm -rf ./.download
 
-dev-env: verify-env print-env confirm env-file pkg-dir
+dev-env: verify-env print-env confirm clean env-file pkg-dir
 	virtualenv --python=python3 venv
 	venv/bin/python -m pip install --upgrade pip
 	venv/bin/pip install -r requirements.txt
@@ -54,14 +30,13 @@ dev-env: verify-env print-env confirm env-file pkg-dir
 dev: dev-env
 	. venv/bin/activate && \
 	export $$(cat .env | xargs) && \
-	export GOOGLE_APPLICATION_CREDENTIALS=$(ENV_PATH)/terraform/terraform-service-account.json && \
-	FLASK_RUN_PORT=${PORT} flask run --host=0.0.0.0
+	export GOOGLE_APPLICATION_CREDENTIALS=$(ENV_PATH)/terraform/terraform-service-account.json
 	
 build-container: verify-env verify-ver print-env confirm clean env-file pkg-dir
-	docker build . -t gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_SITE_CONTAINER_NAME}:${VERSION}
+	docker build . -t gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_DB_CONTAINER_NAME}:${VERSION}
 
 publish-container: 
-	docker push gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_SITE_CONTAINER_NAME}:${VERSION}
+	docker push gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_DB_CONTAINER_NAME}:${VERSION}
 
 build-container-tf:clean env-file pkg-dir
 	docker build . -t ${CONTAINER_TAG}

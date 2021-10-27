@@ -12,8 +12,8 @@ TF_SECRETS = $(ENV_PATH)/terraform/secret.tfvars
 
 include $(ENV_FILE)
 
-.SILENT: confirm-env configure cloud-resource-plan cloud-resource-deploy cloud-resource-destroy verify-env print-env confirm
-.ONESHELL: configure cloud-resource-plan cloud-resource-deploy cloud-resource-destroy verify-env print-env confirm
+.SILENT: cloud-resource-plan cloud-resource-deploy cloud-resource-destroy verify-env print-env confirm build-all-containers
+.ONESHELL: cloud-resource-plan cloud-resource-deploy cloud-resource-destroy verify-env print-env confirm build-all-containers
 
 clean:
 	rm -rf ./env/stage/terraform/tf-plan
@@ -24,21 +24,35 @@ clean:
 	rm -f ./.env
 
 dev-env:
-	docker build . -t cendr-builder
+	docker build . -t caendr-builder
 
 dev:
 	docker run -p 8080:8080 \
 		-v $(PWD):/caendr:rw \
 		-v /var/run/docker.sock:/var/run/docker.sock \
-		-it cendr-builder /bin/bash 
+		-it caendr-builder /bin/bash 
 
-cloud-resource-plan: verify-env print-env confirm
+build-all-containers:
+	cd api/pipeline-task && make build-container ENV=$(ENV) VERSION=$(MODULE_API_PIPELINE_TASK_CONTAINER_VERSION)
+	cd site && make build-container ENV=$(ENV) VERSION=$(MODULE_SITE_CONTAINER_VERSION)
+
+publish-all-containers:
+	cd api/pipeline-task && make publish-container ENV=$(ENV) VERSION=$(MODULE_API_PIPELINE_TASK_CONTAINER_VERSION)
+	cd site && make publish-container ENV=$(ENV) VERSION=$(MODULE_SITE_CONTAINER_VERSION)
+
+configure-all: verify-env print-env confirm
+	cd api/pipeline-task && make clean env-file pkg-dir ENV=$(ENV) && cd ../../
+	cd site && make clean env-file pkg-dir ENV=$(ENV) && cd ../
+	cd img-thumb-gen && make clean env-file pkg-dir ENV=$(ENV)  && cd ../
+
+cloud-resource-plan: configure-all
 	gcloud config set project ${GOOGLE_CLOUD_PROJECT_NAME}
 	export $$(cat $(ENV_FILE) | xargs)
 	while IFS= read -r line; do
 		export TF_VAR_$$line
 	done < $(ENV_FILE)
 	cd $(ENV_PATH)/terraform && terraform init && terraform plan -var-file $(PWD)/$(TF_SECRETS) -out tf-plan
+	echo -e "\n\nType 'make cloud-resource-deploy ENV=$(ENV)' to apply the terraform plan\n" 
 
 cloud-resource-deploy: cloud-resource-plan
 	echo -e "\nContinue (y/N)?\n" 
@@ -57,12 +71,13 @@ cloud-resource-destroy: verify-env print-env confirm
 	cd $(ENV_PATH)/terraform && terraform init && terraform destroy -var-file $(PWD)/$(TF_SECRETS)
 
 verify-env:
-	echo -e "\n\n"
 ifeq ($(ENV),)
 	echo -e "$(RED)Environment argument is required!$(NC)\nPlease include 'ENV=stage' or 'ENV=prod' in your 'make' command\n"
 	exit 1
 else
-	echo -e "ENVIRONMENT: $(RED)$(ENV)$(NC)\n\n"
+	echo -e "\n*************************************************************************************************************************"
+	echo -e "*		ENVIRONMENT: $(RED)$(ENV)$(NC)"
+	echo -e "*************************************************************************************************************************\n"
 endif
 
 print-env:
@@ -70,9 +85,8 @@ print-env:
 	cat $(ENV_FILE)
 
 confirm:
-	echo -e "\n\nPress any key to continue or ctrl + C to cancel\n" 
+	echo -e "\n\nPress 'Enter' to continue or 'Ctrl + C' to cancel\n" 
 	read CONFIRM
-
 
 
 %:

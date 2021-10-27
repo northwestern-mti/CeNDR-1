@@ -1,0 +1,4 @@
+venv
+.env
+pkg
+__pycache__

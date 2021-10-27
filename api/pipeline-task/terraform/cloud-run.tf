@@ -12,7 +12,7 @@ resource "google_cloud_run_service" "api_pipeline_task" {
   template {
     spec {
       containers {
-        image = format("gcr.io/%s/api-pipeline-task", var.GOOGLE_CLOUD_PROJECT_NAME)
+        image = "gcr.io/${var.GOOGLE_CLOUD_PROJECT_NAME}/${var.MODULE_API_PIPELINE_TASK_CONTAINER_NAME}:${var.MODULE_API_PIPELINE_TASK_CONTAINER_VERSION}"
         env {
           name = "FLASK_ENV"
           value = var.ENVIRONMENT
@@ -25,6 +25,10 @@ resource "google_cloud_run_service" "api_pipeline_task" {
     percent         = 100
     latest_revision = true
   }
+
+  depends_on = [
+    time_sleep.wait_container_publish
+  ]
 }
 
 resource "google_cloud_run_service_iam_policy" "noauth" {
