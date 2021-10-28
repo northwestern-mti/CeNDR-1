@@ -1,7 +1,7 @@
 import os
 from functools import wraps
 from flask import request
-from services.secret import get_secret
+from shared.caendr.secret import get_secret
 
 from services.error import APIAuthError
 

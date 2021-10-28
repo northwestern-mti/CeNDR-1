@@ -41,9 +41,9 @@ publish-all-containers:
 	cd site && make publish-container ENV=$(ENV) VERSION=$(MODULE_SITE_CONTAINER_VERSION)
 
 configure-all: verify-env print-env confirm
-	cd api/pipeline-task && make clean env-file pkg-dir ENV=$(ENV) && cd ../../
-	cd site && make clean env-file pkg-dir ENV=$(ENV) && cd ../
-	cd img-thumb-gen && make clean env-file pkg-dir ENV=$(ENV)  && cd ../
+	cd api/pipeline-task && make configure ENV=$(ENV) && cd ../../
+	cd site && make configure ENV=$(ENV) && cd ../
+	cd img-thumb-gen && make configure ENV=$(ENV) && cd ../
 
 cloud-resource-plan: configure-all
 	gcloud config set project ${GOOGLE_CLOUD_PROJECT_NAME}

@@ -44,7 +44,7 @@ clean:
 	rm -rf ./services/*.pyc
 	
 	rm -f ./.env
-	rm -rf ./pkg
+	rm -rf ./shared
 
 dev-env: verify-env print-env confirm env-file pkg-dir
 	virtualenv --python=python3 venv
@@ -63,14 +63,16 @@ build-container: verify-env verify-ver print-env confirm clean env-file pkg-dir
 publish-container: 
 	docker push gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_SITE_CONTAINER_NAME}:${VERSION}
 
-build-container-tf:clean env-file pkg-dir
+configure: verify-env clean env-file pkg-dir
+
+build-container-tf:configure
 	docker build . -t ${CONTAINER_TAG}
 
-publish-container-tf:clean env-file pkg-dir
+publish-container-tf:build-container-tf
 	docker push ${CONTAINER_TAG}
 
 pkg-dir:
-	cp -rf ../pkg ./pkg
+	cp -rf ../shared ./shared
 
 env-file:
 	# Apply global env config to service level .env file

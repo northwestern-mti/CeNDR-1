@@ -8,7 +8,7 @@ Create a project on Google Cloud and [create a service account](https://console.
 Verify that you are working inside of the project that you just created.
 Enter 'terraform-service-account' in the 'Service account name' field, then click 'Create and Continue'
 Select the 'Owner' role from 'Quick access/Basic' then click 'continue'
-Click 'Done' 
+Click 'Done'
 From the list of [service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts) click the 'Actions' column for terraform-service-account and then 'Manage Keys'
 Click 'Add Key' -> 'Create New Key' and select 'JSON' for the Key type
 Save the key file as 'terraform-service-account.json'
@@ -40,6 +40,7 @@ make dev
 Authenticate with Google Cloud:
 gcloud init
 gcloud auth login
+gcloud auth application-default login
 gcloud config set project PROJECT_ID
 gcloud auth configure-docker
 

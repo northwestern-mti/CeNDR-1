@@ -17,6 +17,8 @@ include service.env
 clean:	
 	rm -f ./.env
 
+configure: verify-env clean env-file pkg-dir
+
 env-file:
 	# Apply global env config to service level .env file
 	echo "Writing .env file... "

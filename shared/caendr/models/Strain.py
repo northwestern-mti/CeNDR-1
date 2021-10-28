@@ -1,7 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
-from pkg.caendr.models import DictSerializable
-
-db = SQLAlchemy()
+from shared.caendr.models.db import db, DictSerializable
 
 class Strain(DictSerializable, db.Model):
     __tablename__ = "strain"
