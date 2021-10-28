@@ -10,21 +10,24 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         python3 \
         python3-venv \
-        virtualenv \
-        python3-virtualenv && \
+        python3-virtualenv \
+        virtualenv && \
     apt-get autoremove && \
-    apt-get clean
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copy local code to the container image.
-ENV APP_HOME /app
+# Create src directory
+ENV APP_HOME /pipeline_task
 WORKDIR $APP_HOME
-COPY . ./
 
 # make venv
 RUN virtualenv --python=python3 venv
 ENV VIRTUAL_ENV=$APP_HOME/venv
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# Copy local code to the container image.
+COPY . ./
 
 # Install python modules from pip
 RUN python -m pip install --upgrade pip
@@ -35,6 +38,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # For environments with multiple CPU cores, increase the number of workers
 # to be equal to the cores available.
 # Timeout is set to 0 to disable the timeouts of the workers to allow Cloud Run to handle instance scaling.
-CMD export PYTHONPATH=${PKG_HOME} && \
-    export $(cat .env | xargs) && \
+CMD export $(cat .env | xargs) && \
     exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app

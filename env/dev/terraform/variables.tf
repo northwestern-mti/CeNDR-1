@@ -8,7 +8,10 @@ variable "ENVIRONMENT" { }
 
 
 variable "MODULE_DB_POSTGRES_DB_NAME" { }
+variable "MODULE_DB_POSTGRES_DB_STAGE_NAME" { }
 variable "MODULE_DB_POSTGRES_INSTANCE_NAME" { }
+variable "MODULE_DB_POSTGRES_DB_USER" { }
+variable "MODULE_DB_POSTGRES_DB_PASSWORD" { sensitive = true }
 
 variable "MODULE_SITE_CONTAINER_NAME" { }
 variable "MODULE_SITE_CONTAINER_VERSION" { }

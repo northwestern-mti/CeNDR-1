@@ -1,50 +1,52 @@
 FROM gcr.io/google-appengine/python
 
+ENV PYTHONUNBUFFERED True
+
 # Install production dependencies.
 RUN apt-get update && \
     apt-get upgrade -y --no-install-recommends && \
     apt-get install -y --no-install-recommends \
-        gunicorn \
-        python3 \
-        python3-venv \
-        python3-dev \
-        virtualenv \
-        python3-virtualenv \
         build-essential \
         ca-certificates \
         curl \
+        fuse \
         git \
+        graphviz \
+        gunicorn \
+        libbz2-dev \
+        libgraphviz-dev \
+        liblzma-dev \
         libncursesw5-dev \
         libncurses5-dev \
-        make \
-        zlib1g-dev \
-        libbz2-dev \
-        liblzma-dev \
-        fuse \
-        tabix \
-        graphviz \
-        libgraphviz-dev \
-        pkg-config \
         libxml2 \
-        xmlsec1 \
         libxml2-dev \
         libxmlsec1-dev \
-        libxmlsec1-openssl && \
+        libxmlsec1-openssl \
+        make \
+        pkg-config \
+        python3 \
+        python3-dev \
+        python3-venv \
+        python3-virtualenv \
+        tabix \
+        virtualenv \
+        xmlsec1 \
+        zlib1g-dev && \
     apt-get autoremove && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-
-# Copy local code to container image
 ENV APP_HOME /site
 WORKDIR $APP_HOME
-COPY . ./
 
 # make venv
 RUN virtualenv --python=python3 venv
 ENV VIRTUAL_ENV=$APP_HOME/venv
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# Copy local code to container image
+COPY . ./
 
 # Install python modules from pip
 RUN python -m pip install --upgrade pip

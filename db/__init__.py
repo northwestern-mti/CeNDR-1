@@ -66,7 +66,6 @@ def initialize_postgres_database(sel_wormbase_version,
     console.log('Finished loading strains')
     return
 
-  load_metadata(db, sel_wormbase_version)
   load_genes_summary(db, f)
   load_genes_table(db, f)
   load_homologs(db, f)
@@ -75,10 +74,6 @@ def initialize_postgres_database(sel_wormbase_version,
   generate_gene_dict()
 
 
-##########################
-# Download external data #
-##########################
-@timeit
 def download_external_data(sel_wormbase_version):
   console.log('Downloading External Data...')
   if not os.path.exists(DOWNLOAD_PATH):
@@ -108,9 +103,6 @@ def download_external_data(sel_wormbase_version):
   return fnames
 
 
-################
-# Reset Tables #
-################
 @timeit
 def reset_tables(app, db, tables = None):
   if tables is None:
@@ -126,11 +118,6 @@ def reset_tables(app, db, tables = None):
 
   db.session.commit()
 
-
-
-################
-# Load Strains #
-################
 @timeit
 def load_strains(db): 
   console.log('Loading strains...')
@@ -139,41 +126,6 @@ def load_strains(db):
   db.session.commit()
   console.log(f"Inserted {Strain.query.count()} strains")
 
-
-################
-# Set metadata #
-################
-@timeit
-def load_metadata(db, sel_wormbase_version):
-  start = arrow.utcnow()
-  console.log('Inserting metadata')
-  metadata = {}
-  metadata.update(vars(constants))
-  metadata.update({"CENDR_VERSION": config['CENDR_VERSION'],
-                    "APP_CONFIG": config['APP_CONFIG'],
-                    "DATASET_RELEASE": config['DATASET_RELEASE'],
-                    "WORMBASE_VERSION": sel_wormbase_version,
-                    "RELEASES": config['RELEASES'],
-                    "DATE": arrow.utcnow()})
-
-  for k, v in metadata.items():
-    if not k.startswith("_"):
-      # For nested constants:
-      if type(v) == type:
-        for name in [x for x in dir(v) if not x.startswith("_")]:
-          key_val = Metadata(key="{}/{}".format(k, name),
-                              value=getattr(v, name))
-          db.session.add(key_val)
-      else:
-        key_val = Metadata(key=k, value=str(v))
-        db.session.add(key_val)
-
-  db.session.commit()
-
-
-##############
-# Load Genes #
-##############
 @timeit
 def load_genes_summary(db, f):
   console.log('Loading summary gene table')
@@ -181,8 +133,6 @@ def load_genes_summary(db, f):
   db.session.bulk_insert_mappings(WormbaseGeneSummary, gene_summary)
   db.session.commit()
 
-
-@timeit
 def load_genes_table(db, f):
   console.log('Loading gene table')
   genes = fetch_gene_gtf(f['gtf'], f['gene_ids'])
@@ -195,33 +145,18 @@ def load_genes_table(db, f):
   result_summary = '\n'.join([f"{k}: {v}" for k, v in results])
   console.log(f"============\nGene Summary\n------------\n{result_summary}\n============\n")
 
-
-###############################
-#        Load homologs        #
-###############################
-@timeit
 def load_homologs(db, f):
   console.log('Loading homologs from homologene')
   homologene = fetch_homologene(f['homologene'])
   db.session.bulk_insert_mappings(Homologs, homologene)
   db.session.commit()
   
-
-###############################
-#       Load Orthologs        #
-###############################
-@timeit
 def load_orthologs(db, f):
   console.log('Loading orthologs from WormBase')
   orthologs = fetch_orthologs(f['ortholog'])
   db.session.bulk_insert_mappings(Homologs, orthologs)
   db.session.commit()
 
-
-######################################
-# Load Strain Variant Annotated Data #
-######################################
-@timeit
 def load_variant_annotation(db, f):
   console.log('Loading strain variant annotated csv')
   sva_data = fetch_strain_variant_annotation_data(f['sva'])

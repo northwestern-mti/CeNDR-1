@@ -1,3 +1,7 @@
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+
 class DictSerializable(object):
   def _asdict(self):
     result = {}

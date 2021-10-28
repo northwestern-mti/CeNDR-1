@@ -30,10 +30,10 @@ clean:
 
 	rm -f ./.env
 
-	rm -rf ./pkg
+	rm -rf ./shared
 
 pkg-dir:
-	cp -rf ../../pkg ./pkg
+	cp -rf ../../shared ./shared
 
 dev-env: verify-env print-env confirm clean env-file pkg-dir
 	virtualenv --python=python3 venv
@@ -52,10 +52,12 @@ build-container: verify-env verify-ver print-env confirm clean env-file pkg-dir
 publish-container: 
 	docker push gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_API_PIPELINE_TASK_CONTAINER_NAME}:${VERSION}
 
-build-container-tf:clean env-file pkg-dir
+configure: verify-env clean env-file pkg-dir
+
+build-container-tf:configure
 	docker build . -t ${CONTAINER_TAG}
 
-publish-container-tf:clean env-file pkg-dir
+publish-container-tf:build-container-tf
 	docker push ${CONTAINER_TAG}
 
 verify-env:

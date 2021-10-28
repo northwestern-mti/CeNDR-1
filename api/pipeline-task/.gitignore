@@ -4,4 +4,4 @@ venv
 .terraform
 *.json
 .env
-pkg
+shared

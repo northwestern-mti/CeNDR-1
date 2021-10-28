@@ -1,8 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
-from pkg.caendr.models import DictSerializable
-
-db = SQLAlchemy()
-
+from shared.caendr.models.db import db, DictSerializable
 
 class Homologs(DictSerializable, db.Model):
     """

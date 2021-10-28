@@ -19,7 +19,7 @@ clean:
 	rm -f *.pyc
 	rm -rf ./__pycache__/	
 	rm -f ./.env
-	rm -rf ./pkg
+	rm -rf ./shared
 	rm -rf ./.download
 
 dev-env: verify-env print-env confirm clean env-file pkg-dir
@@ -32,20 +32,23 @@ dev: dev-env
 	export $$(cat .env | xargs) && \
 	export GOOGLE_APPLICATION_CREDENTIALS=$(ENV_PATH)/terraform/terraform-service-account.json
 	
-build-container: verify-env verify-ver print-env confirm clean env-file pkg-dir
-	docker build . -t gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_DB_CONTAINER_NAME}:${VERSION}
+build-container: verify-env print-env confirm clean env-file pkg-dir
+	docker build . -t ${MODULE_DB_CONTAINER_NAME}
 
 publish-container: 
+	docker build . -t gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_DB_CONTAINER_NAME}:${VERSION}
 	docker push gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_DB_CONTAINER_NAME}:${VERSION}
 
-build-container-tf:clean env-file pkg-dir
+configure: verify-env clean env-file pkg-dir
+
+build-container-tf:configure
 	docker build . -t ${CONTAINER_TAG}
 
-publish-container-tf:clean env-file pkg-dir
+publish-container-tf:build-container-tf
 	docker push ${CONTAINER_TAG}
-
+	
 pkg-dir:
-	cp -rf ../pkg ./pkg
+	cp -rf ../shared ./shared
 
 env-file:
 	# Apply global env config to service level .env file
