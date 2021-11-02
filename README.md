@@ -4,7 +4,7 @@
 
 Initial Setup:
 
-Create a project on Google Cloud and [create a service account](https://console.cloud.google.com/iam-admin/serviceaccounts/create) for terraform.
+Create a project on Google Cloud and a [service account](https://console.cloud.google.com/iam-admin/serviceaccounts/create) for terraform.
 Verify that you are working inside of the project that you just created.
 Enter 'terraform-service-account' in the 'Service account name' field, then click 'Create and Continue'
 Select the 'Owner' role from 'Quick access/Basic' then click 'continue'
@@ -13,13 +13,8 @@ From the list of [service accounts](https://console.cloud.google.com/iam-admin/s
 Click 'Add Key' -> 'Create New Key' and select 'JSON' for the Key type
 Save the key file as 'terraform-service-account.json'
 
-
-Duplicate one of the existing 'env' directories and rename it. (ie: dev, stage, prod, etc..)
-Remove these files from the terraform directory:
-.terraform.lock.hcl
-.terraform.tfstate.lock.info
-terraform.tfstate
-terraform.tfstate.backup
+To create a new environment:
+Duplicate the ./env/template/ directories and rename it. (ie: dev, stage, prod, etc..)
 
 Update the .env file to target the project that you just created.
 Move 'terraform-service-account.json' to the terraform folder inside of the new env directory you just created (ie: env/dev/terraform/terraform-service-account.json)

@@ -6,13 +6,15 @@ YELLOW=\033[0;33m
 NC=\033[0m
 
 ENV_PATH = ./env/$(ENV)
-ENV_FILE = ./env/$(ENV)/.env
-TF_VARS = $(ENV_PATH)/terraform/terraform.tfvars
-TF_SECRETS = $(ENV_PATH)/terraform/secret.tfvars
+TF_PATH = $(ENV_PATH)/terraform
+
+ENV_FILE = $(ENV_PATH)/global.env
+SECRET_ENV_FILE = $(ENV_PATH)/secrets.env
+
 
 include $(ENV_FILE)
 
-.SILENT: cloud-resource-plan cloud-resource-deploy cloud-resource-destroy verify-env print-env confirm build-all-containers
+.SILENT:  cloud-resource-deploy cloud-resource-destroy verify-env print-env confirm build-all-containers configure-all cloud-resource-plan
 .ONESHELL: cloud-resource-plan cloud-resource-deploy cloud-resource-destroy verify-env print-env confirm build-all-containers
 
 clean:
@@ -22,6 +24,11 @@ clean:
 	rm -f *.pyc
 	rm -rf __pycache__/
 	rm -f ./.env
+
+clean-all:
+	cd api/pipeline-task && make clean && cd ../../
+	cd site && make clean && cd ../
+	cd img-thumb-gen && make clean && cd ../
 
 dev-env:
 	docker build . -t caendr-builder
@@ -44,14 +51,17 @@ configure-all: verify-env print-env confirm
 	cd api/pipeline-task && make configure ENV=$(ENV) && cd ../../
 	cd site && make configure ENV=$(ENV) && cd ../
 	cd img-thumb-gen && make configure ENV=$(ENV) && cd ../
+	
+	echo -e "\n**********************************************************************************"
+	echo -e "*              $(GREEN)Global Environment Configuration Complete!$(NC)                        *"
+	echo -e "**********************************************************************************\n"
 
 cloud-resource-plan: configure-all
 	gcloud config set project ${GOOGLE_CLOUD_PROJECT_NAME}
-	export $$(cat $(ENV_FILE) | xargs)
-	while IFS= read -r line; do
-		export TF_VAR_$$line
-	done < $(ENV_FILE)
-	cd $(ENV_PATH)/terraform && terraform init && terraform plan -var-file $(PWD)/$(TF_SECRETS) -out tf-plan
+	export $$(cat $(ENV_FILE) | xargs) && \
+	while IFS= read -r line; do export TF_VAR_$$line; done < $(ENV_FILE) && \
+	while IFS= read -r line; do export TF_VAR_$$line; done < $(SECRET_ENV_FILE) && \
+	cd $(TF_PATH) && terraform init && terraform plan -out tf-plan && \
 	echo -e "\n\nType 'make cloud-resource-deploy ENV=$(ENV)' to apply the terraform plan\n" 
 
 cloud-resource-deploy: cloud-resource-plan
@@ -60,15 +70,14 @@ cloud-resource-deploy: cloud-resource-plan
 	if [ "$$CONFIRM" != "y" ]; then
 		exit 1
 	fi
-	cd $(ENV_PATH)/terraform && terraform apply "tf-plan"
+	cd $(TF_PATH) && terraform apply "tf-plan"
 
 cloud-resource-destroy: verify-env print-env confirm
 	gcloud config set project ${GOOGLE_CLOUD_PROJECT_NAME}
-	export $$(cat $(ENV_FILE) | xargs)
-	while IFS= read -r line; do
-		export TF_VAR_$$line
-	done < $(ENV_FILE)
-	cd $(ENV_PATH)/terraform && terraform init && terraform destroy -var-file $(PWD)/$(TF_SECRETS)
+	export $$(cat $(ENV_FILE) | xargs) && \
+	while IFS= read -r line; do export TF_VAR_$$line; done < $(ENV_FILE) && \
+	while IFS= read -r line; do export TF_VAR_$$line; done < $(SECRET_ENV_FILE) && \
+	cd $(TF_PATH) && terraform init && terraform destroy
 
 verify-env:
 ifeq ($(ENV),)
@@ -76,6 +85,7 @@ ifeq ($(ENV),)
 	exit 1
 else
 	echo -e "\n*************************************************************************************************************************"
+	echo -e "*		SERVICE:     $(YELLOW)Global$(NC)"
 	echo -e "*		ENVIRONMENT: $(RED)$(ENV)$(NC)"
 	echo -e "*************************************************************************************************************************\n"
 endif

@@ -20,7 +20,7 @@ resource "google_sql_database_instance" "postgres_db_instance" {
   project          = var.GOOGLE_CLOUD_PROJECT_NAME
   region           = var.GOOGLE_CLOUD_REGION
 
-  deletion_protection = true
+  deletion_protection = false
 
   settings {
     activation_policy = "ALWAYS"

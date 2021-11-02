@@ -6,7 +6,9 @@ YELLOW=\033[0;33m
 NC=\033[0m
 
 ENV_PATH = ../env/$(ENV)
-ENV_FILE = ../env/$(ENV)/.env
+TF_PATH = $(ENV_PATH)/terraform
+
+ENV_FILE = $(ENV_PATH)/global.env
 
 include $(ENV_FILE)
 include service.env
@@ -18,19 +20,14 @@ clean:
 	rm -rf ./venv
 	rm -f *.pyc
 	rm -rf ./__pycache__/
-
 	rm -rf ./base/__pycache__/
 	rm -rf ./base/*.pyc
-
 	rm -rf ./base/static/__pycache__/
 	rm -rf ./base/static/*.pyc
-
 	rm -rf ./base/utils/__pycache__/
 	rm -rf ./base/utils/*.pyc
-
 	rm -rf ./base/views/__pycache__/
 	rm -rf ./base/views/*.pyc
-
 	rm -rf ./base/views/admin/__pycache__/
 	rm -rf ./base/views/admin/*.pyc
 	rm -rf ./base/views/api/__pycache__/
@@ -39,12 +36,10 @@ clean:
 	rm -rf ./base/views/auth/*.pyc
 	rm -rf ./base/views/tools/__pycache__/
 	rm -rf ./base/views/tools/*.pyc
-
 	rm -rf ./services/__pycache__/
 	rm -rf ./services/*.pyc
-	
 	rm -f ./.env
-	rm -rf ./shared
+	rm -rf ./caendr
 
 dev-env: verify-env print-env confirm env-file pkg-dir
 	virtualenv --python=python3 venv
@@ -54,7 +49,7 @@ dev-env: verify-env print-env confirm env-file pkg-dir
 dev: dev-env
 	. venv/bin/activate && \
 	export $$(cat .env | xargs) && \
-	export GOOGLE_APPLICATION_CREDENTIALS=$(ENV_PATH)/terraform/terraform-service-account.json && \
+	export GOOGLE_APPLICATION_CREDENTIALS=$(TF_PATH)/terraform-service-account.json && \
 	FLASK_RUN_PORT=${PORT} flask run --host=0.0.0.0
 	
 build-container: verify-env verify-ver print-env confirm clean env-file pkg-dir
@@ -72,15 +67,15 @@ publish-container-tf:build-container-tf
 	docker push ${CONTAINER_TAG}
 
 pkg-dir:
-	cp -rf ../shared ./shared
+	cp -rf ../shared/caendr ./caendr
 
 env-file:
 	# Apply global env config to service level .env file
-	echo "Writing .env file... "
+	echo -e "\nWriting .env file... "
 	rm -rf .env
 	cat $(ENV_FILE) >> .env
 	cat service.env >> .env
-	echo -e "DONE\n"
+	echo -e "$(GREEN)DONE!$(NC)\n"
 
 verify-env:
 ifeq ($(ENV),)
@@ -88,6 +83,7 @@ ifeq ($(ENV),)
 	exit 1
 else
 	echo -e "\n*************************************************************************************************************************"
+	echo -e "*		SERVICE:     $(YELLOW)Site$(NC)"
 	echo -e "*		ENVIRONMENT: $(RED)$(ENV)$(NC)"
 	echo -e "*************************************************************************************************************************"
 endif

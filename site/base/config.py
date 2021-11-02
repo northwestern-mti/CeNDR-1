@@ -4,7 +4,7 @@ import yaml
 
 from logzero import logger
 
-from shared.caendr.secret import get_secret
+from caendr.services.secret import get_secret
 
 from base.utils.data_utils import json_encoder
 from base.constants import DEFAULT_CLOUD_CONFIG

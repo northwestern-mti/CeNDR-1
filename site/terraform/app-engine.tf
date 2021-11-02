@@ -62,7 +62,7 @@ resource "google_app_engine_flexible_app_version" "site" {
   project         = var.GOOGLE_CLOUD_PROJECT_NAME
   service         = "default"
   runtime         = "custom"
-  serving_status  = "STOPPED"
+  serving_status  = "SERVING"
 
   deployment {
     container {
@@ -137,4 +137,15 @@ resource "google_app_engine_service_split_traffic" "site_traffic" {
       (google_app_engine_flexible_app_version.site.version_id) = 1
     }
   }
+  depends_on = [
+    time_sleep.wait_app_engine_start
+  ]
+}
+
+resource "time_sleep" "wait_app_engine_start" {
+    create_duration = "300s"
+
+    depends_on = [
+        google_app_engine_flexible_app_version.site
+    ]
 }

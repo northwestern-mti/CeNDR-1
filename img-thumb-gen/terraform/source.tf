@@ -8,7 +8,6 @@ data "archive_file" "source" {
   type        = "zip"
   source_dir  = local.codebase_root_path
   output_path = "/tmp/function-${local.timestamp}.zip"
-  exclude = []
 }
 
 # Add source code zip to bucket

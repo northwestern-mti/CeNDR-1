@@ -22,7 +22,7 @@ resource "null_resource" "publish_container" {
 }
 
 resource "time_sleep" "wait_container_publish" {
-    create_duration = "60s"
+    create_duration = "90s"
 
     depends_on = [
         null_resource.publish_container

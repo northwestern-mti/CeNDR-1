@@ -1,0 +1,7 @@
+dev/global.env
+dev/secrets.env
+dev/terraform-service-account.json
+test/global.env
+test/secrets.env
+test/terraform/terraform-service-account.json
+tf-plan

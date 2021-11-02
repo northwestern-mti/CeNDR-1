@@ -5,8 +5,11 @@ GREEN=\033[0;32m
 YELLOW=\033[0;33m
 NC=\033[0m
 
+
 ENV_PATH = ../../env/$(ENV)
-ENV_FILE = ../../env/$(ENV)/.env
+TF_PATH = $(ENV_PATH)/terraform
+
+ENV_FILE = $(ENV_PATH)/global.env
 
 include $(ENV_FILE)
 include service.env
@@ -18,22 +21,17 @@ clean:
 	rm -rf ./venv
 	rm -f ./*.pyc
 	rm -rf ./__pycache__/
-
 	rm -rf ./pipelines/__pycache__/
 	rm -rf ./pipelines/*.pyc
-
 	rm -rf ./routes/__pycache__/
 	rm -rf ./routes/*.pyc
-
 	rm -rf ./services/__pycache__/
 	rm -rf ./services/*.pyc
-
 	rm -f ./.env
-
-	rm -rf ./shared
+	rm -rf ./caendr
 
 pkg-dir:
-	cp -rf ../../shared ./shared
+	cp -rf ../../shared/caendr ./caendr
 
 dev-env: verify-env print-env confirm clean env-file pkg-dir
 	virtualenv --python=python3 venv
@@ -43,7 +41,7 @@ dev-env: verify-env print-env confirm clean env-file pkg-dir
 dev: dev-env
 	. venv/bin/activate && \
 	export $$(cat .env | xargs) && \
-	export GOOGLE_APPLICATION_CREDENTIALS=$(ENV_PATH)/terraform/terraform-service-account.json && \
+	export GOOGLE_APPLICATION_CREDENTIALS=$(TF_PATH)/terraform-service-account.json && \
 	python main.py
 
 build-container: verify-env verify-ver print-env confirm clean env-file pkg-dir
@@ -66,6 +64,7 @@ ifeq ($(ENV),)
 	exit 1
 else
 	echo -e "\n*************************************************************************************************************************"
+	echo -e "*		SERVICE:     $(YELLOW)API Pipeline Task$(NC)"
 	echo -e "*		ENVIRONMENT: $(RED)$(ENV)$(NC)"
 	echo -e "*************************************************************************************************************************"
 endif
@@ -88,11 +87,11 @@ print-env:
 
 env-file:
 	# Apply global env config to service level .env file
-	echo "Writing .env file... "
+	echo -e "\nWriting .env file... "
 	rm -rf .env
 	cat $(ENV_FILE) >> .env
 	cat service.env >> .env
-	echo -e "DONE\n"
+	echo -e "$(GREEN)DONE!$(NC)\n"
 
 confirm:
 	echo -e "\n\nPress 'Enter' to continue or 'Ctrl + C' to cancel\n" 
