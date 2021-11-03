@@ -38,8 +38,8 @@ build-container: verify-env print-env confirm clean env-file pkg-dir
 	docker build . -t ${MODULE_DB_CONTAINER_NAME}
 
 publish-container: 
-	docker build . -t gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_DB_CONTAINER_NAME}:${VERSION}
-	docker push gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_DB_CONTAINER_NAME}:${VERSION}
+	docker build . -t gcr.io/${GOOGLE_CLOUD_PROJECT_ID}/${MODULE_DB_CONTAINER_NAME}:${VERSION}
+	docker push gcr.io/${GOOGLE_CLOUD_PROJECT_ID}/${MODULE_DB_CONTAINER_NAME}:${VERSION}
 
 configure: verify-env clean env-file pkg-dir
 
@@ -77,7 +77,7 @@ ifeq ($(VERSION),)
 	exit 1
 else
 	echo -e "*************************************************************************************************************************"
-	echo -e "*		CONTAINER:   $(GREEN)gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_SITE_CONTAINER_NAME}:${VERSION}$(NC)"
+	echo -e "*		CONTAINER:   $(GREEN)gcr.io/${GOOGLE_CLOUD_PROJECT_ID}/${MODULE_SITE_CONTAINER_NAME}:${VERSION}$(NC)"
 	echo -e "*************************************************************************************************************************\n"
 endif
 

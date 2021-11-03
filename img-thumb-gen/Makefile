@@ -47,7 +47,7 @@ ifeq ($(VERSION),)
 	exit 1
 else
 	echo -e "*************************************************************************************************************************"
-	echo -e "*		CONTAINER:   $(GREEN)gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_SITE_CONTAINER_NAME}:${VERSION}$(NC)"
+	echo -e "*		CONTAINER:   $(GREEN)gcr.io/${GOOGLE_CLOUD_PROJECT_ID}/${MODULE_SITE_CONTAINER_NAME}:${VERSION}$(NC)"
 	echo -e "*************************************************************************************************************************\n"
 endif
 

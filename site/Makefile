@@ -53,10 +53,10 @@ dev: dev-env
 	FLASK_RUN_PORT=${PORT} flask run --host=0.0.0.0
 	
 build-container: verify-env verify-ver print-env confirm clean env-file pkg-dir
-	docker build . -t gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_SITE_CONTAINER_NAME}:${VERSION}
+	docker build . -t gcr.io/${GOOGLE_CLOUD_PROJECT_ID}/${MODULE_SITE_CONTAINER_NAME}:${VERSION}
 
 publish-container: 
-	docker push gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_SITE_CONTAINER_NAME}:${VERSION}
+	docker push gcr.io/${GOOGLE_CLOUD_PROJECT_ID}/${MODULE_SITE_CONTAINER_NAME}:${VERSION}
 
 configure: verify-env clean env-file pkg-dir
 
@@ -94,7 +94,7 @@ ifeq ($(VERSION),)
 	exit 1
 else
 	echo -e "*************************************************************************************************************************"
-	echo -e "*		CONTAINER:   $(GREEN)gcr.io/${GOOGLE_CLOUD_PROJECT_NAME}/${MODULE_SITE_CONTAINER_NAME}:${VERSION}$(NC)"
+	echo -e "*		CONTAINER:   $(GREEN)gcr.io/${GOOGLE_CLOUD_PROJECT_ID}/${MODULE_SITE_CONTAINER_NAME}:${VERSION}$(NC)"
 	echo -e "*************************************************************************************************************************\n"
 endif
 

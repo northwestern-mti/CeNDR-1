@@ -1,72 +1,72 @@
 resource "google_app_engine_application" "app" {
-  project     = var.GOOGLE_CLOUD_PROJECT_NAME
+  project     = var.GOOGLE_CLOUD_PROJECT_ID
   location_id = var.GOOGLE_CLOUD_APP_LOCATION
 }
 
 
 
 resource "google_project_iam_member" "app_engine_secret_viewer" {
-  project = var.GOOGLE_CLOUD_PROJECT_NAME
+  project = var.GOOGLE_CLOUD_PROJECT_ID
   role    = "roles/secretmanager.viewer"
-  member  = "serviceAccount:${var.GOOGLE_CLOUD_PROJECT_NAME}@appspot.gserviceaccount.com"
+  member  = "serviceAccount:${var.GOOGLE_CLOUD_PROJECT_ID}@appspot.gserviceaccount.com"
 }
 
 resource "google_project_iam_member" "app_engine_secret_accessor" {
-  project = var.GOOGLE_CLOUD_PROJECT_NAME
+  project = var.GOOGLE_CLOUD_PROJECT_ID
   role    = "roles/secretmanager.secretAccessor"
-  member  = "serviceAccount:${var.GOOGLE_CLOUD_PROJECT_NAME}@appspot.gserviceaccount.com"
+  member  = "serviceAccount:${var.GOOGLE_CLOUD_PROJECT_ID}@appspot.gserviceaccount.com"
 }
 
 resource "google_project_iam_member" "app_engine_storage_object_viewer" {
-  project = var.GOOGLE_CLOUD_PROJECT_NAME
+  project = var.GOOGLE_CLOUD_PROJECT_ID
   role    = "roles/storage.objectViewer"
-  member  = "serviceAccount:${var.GOOGLE_CLOUD_PROJECT_NAME}@appspot.gserviceaccount.com"
+  member  = "serviceAccount:${var.GOOGLE_CLOUD_PROJECT_ID}@appspot.gserviceaccount.com"
 }
 
 resource "google_project_iam_member" "app_engine_datastore_user" {
-  project = var.GOOGLE_CLOUD_PROJECT_NAME
+  project = var.GOOGLE_CLOUD_PROJECT_ID
   role    = "roles/datastore.user"
-  member  = "serviceAccount:${var.GOOGLE_CLOUD_PROJECT_NAME}@appspot.gserviceaccount.com"
+  member  = "serviceAccount:${var.GOOGLE_CLOUD_PROJECT_ID}@appspot.gserviceaccount.com"
 }
 
 
 
 resource "google_project_iam_member" "app_engine_flex_secret_viewer" {
-  project = var.GOOGLE_CLOUD_PROJECT_NAME
+  project = var.GOOGLE_CLOUD_PROJECT_ID
   role    = "roles/secretmanager.viewer"
-  member  = "serviceAccount:service-${var.GOOGLE_CLOUD_PROJECT_ID}@gae-api-prod.google.com.iam.gserviceaccount.com"
+  member  = "serviceAccount:service-${var.GOOGLE_CLOUD_PROJECT_NUMBER}@gae-api-prod.google.com.iam.gserviceaccount.com"
 }
 
 resource "google_project_iam_member" "app_engine_flex_secret_accessor" {
-  project = var.GOOGLE_CLOUD_PROJECT_NAME
+  project = var.GOOGLE_CLOUD_PROJECT_ID
   role    = "roles/secretmanager.secretAccessor"
-  member  = "serviceAccount:service-${var.GOOGLE_CLOUD_PROJECT_ID}@gae-api-prod.google.com.iam.gserviceaccount.com"
+  member  = "serviceAccount:service-${var.GOOGLE_CLOUD_PROJECT_NUMBER}@gae-api-prod.google.com.iam.gserviceaccount.com"
 }
 
 resource "google_project_iam_member" "app_engine_flex_storage_object_viewer" {
-  project = var.GOOGLE_CLOUD_PROJECT_NAME
+  project = var.GOOGLE_CLOUD_PROJECT_ID
   role    = "roles/storage.objectViewer"
-  member  = "serviceAccount:service-${var.GOOGLE_CLOUD_PROJECT_ID}@gae-api-prod.google.com.iam.gserviceaccount.com"
+  member  = "serviceAccount:service-${var.GOOGLE_CLOUD_PROJECT_NUMBER}@gae-api-prod.google.com.iam.gserviceaccount.com"
 }
 
 resource "google_project_iam_member" "app_engine_flex_datastore_user" {
-  project = var.GOOGLE_CLOUD_PROJECT_NAME
+  project = var.GOOGLE_CLOUD_PROJECT_ID
   role    = "roles/datastore.user"
-  member  = "serviceAccount:service-${var.GOOGLE_CLOUD_PROJECT_ID}@gae-api-prod.google.com.iam.gserviceaccount.com"
+  member  = "serviceAccount:service-${var.GOOGLE_CLOUD_PROJECT_NUMBER}@gae-api-prod.google.com.iam.gserviceaccount.com"
 }
 
 
 
 resource "google_app_engine_flexible_app_version" "site" {
   version_id      = replace("${var.MODULE_SITE_CONTAINER_NAME}-${var.MODULE_SITE_CONTAINER_VERSION}",".","-")
-  project         = var.GOOGLE_CLOUD_PROJECT_NAME
+  project         = var.GOOGLE_CLOUD_PROJECT_ID
   service         = "default"
   runtime         = "custom"
   serving_status  = "SERVING"
 
   deployment {
     container {
-      image = "gcr.io/${var.GOOGLE_CLOUD_PROJECT_NAME}/${var.MODULE_SITE_CONTAINER_NAME}:${var.MODULE_SITE_CONTAINER_VERSION}"
+      image = "gcr.io/${var.GOOGLE_CLOUD_PROJECT_ID}/${var.MODULE_SITE_CONTAINER_NAME}:${var.MODULE_SITE_CONTAINER_VERSION}"
     }
   }
 

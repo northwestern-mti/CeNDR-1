@@ -3,7 +3,7 @@ resource "google_sql_database" "postgres_db_main" {
   collation = "en_US.UTF8"
   instance  = google_sql_database_instance.postgres_db_instance.name
   name      = var.MODULE_DB_POSTGRES_DB_NAME
-  project   = var.GOOGLE_CLOUD_PROJECT_NAME
+  project   = var.GOOGLE_CLOUD_PROJECT_ID
 }
 
 resource "google_sql_database" "postgres_db_stage" {
@@ -11,13 +11,13 @@ resource "google_sql_database" "postgres_db_stage" {
   collation = "en_US.UTF8"
   instance  = google_sql_database_instance.postgres_db_instance.name
   name      = var.MODULE_DB_POSTGRES_DB_STAGE_NAME
-  project   = var.GOOGLE_CLOUD_PROJECT_NAME
+  project   = var.GOOGLE_CLOUD_PROJECT_ID
 }
 
 resource "google_sql_database_instance" "postgres_db_instance" {
   database_version = "POSTGRES_13"
   name             = var.MODULE_DB_POSTGRES_INSTANCE_NAME
-  project          = var.GOOGLE_CLOUD_PROJECT_NAME
+  project          = var.GOOGLE_CLOUD_PROJECT_ID
   region           = var.GOOGLE_CLOUD_REGION
 
   deletion_protection = false

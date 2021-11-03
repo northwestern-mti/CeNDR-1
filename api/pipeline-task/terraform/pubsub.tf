@@ -4,7 +4,7 @@ resource "google_pubsub_topic" "nemascan" {
   }
 
   name    = "nemascan"
-  project = var.GOOGLE_CLOUD_PROJECT_NAME
+  project = var.GOOGLE_CLOUD_PROJECT_ID
 }
 
 
@@ -18,7 +18,7 @@ resource "google_pubsub_subscription" "nscalc" {
 
   message_retention_duration = "259200s"
   name                       = "nscalc"
-  project                    = var.GOOGLE_CLOUD_PROJECT_NAME
+  project                    = var.GOOGLE_CLOUD_PROJECT_ID
 
   push_config {
     push_endpoint = google_cloud_run_service.api_pipeline_task.status[0].url

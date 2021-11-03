@@ -9,7 +9,7 @@ resource "google_cloudfunctions_function" "generate_thumbnails" {
       retry = "false"
     }
 
-    resource = "projects/${var.GOOGLE_CLOUD_PROJECT_NAME}/buckets/${var.MODULE_IMG_THUMB_GEN_SOURCE_BUCKET_NAME}"
+    resource = "projects/${var.GOOGLE_CLOUD_PROJECT_ID}/buckets/${var.MODULE_IMG_THUMB_GEN_SOURCE_BUCKET_NAME}"
   }
 
   environment_variables = {
@@ -23,9 +23,9 @@ resource "google_cloudfunctions_function" "generate_thumbnails" {
 
   max_instances         = "0"
   name                  = "generate_thumbnails"
-  project               = "${var.GOOGLE_CLOUD_PROJECT_NAME}"
+  project               = "${var.GOOGLE_CLOUD_PROJECT_ID}"
   region                = "${var.GOOGLE_CLOUD_REGION}"
   runtime               = "python37"
-  service_account_email = "${var.GOOGLE_CLOUD_PROJECT_NAME}@appspot.gserviceaccount.com"
+  service_account_email = "${var.GOOGLE_CLOUD_PROJECT_ID}@appspot.gserviceaccount.com"
   timeout               = "60"
 }

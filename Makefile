@@ -9,7 +9,7 @@ ENV_PATH = ./env/$(ENV)
 TF_PATH = $(ENV_PATH)/terraform
 
 ENV_FILE = $(ENV_PATH)/global.env
-SECRET_ENV_FILE = $(ENV_PATH)/secrets.env
+SECRET_ENV_FILE = $(ENV_PATH)/secret.env
 
 
 include $(ENV_FILE)
@@ -57,7 +57,7 @@ configure-all: verify-env print-env confirm
 	echo -e "**********************************************************************************\n"
 
 cloud-resource-plan: configure-all
-	gcloud config set project ${GOOGLE_CLOUD_PROJECT_NAME}
+	gcloud config set project ${GOOGLE_CLOUD_PROJECT_ID}
 	export $$(cat $(ENV_FILE) | xargs) && \
 	while IFS= read -r line; do export TF_VAR_$$line; done < $(ENV_FILE) && \
 	while IFS= read -r line; do export TF_VAR_$$line; done < $(SECRET_ENV_FILE) && \
@@ -73,7 +73,7 @@ cloud-resource-deploy: cloud-resource-plan
 	cd $(TF_PATH) && terraform apply "tf-plan"
 
 cloud-resource-destroy: verify-env print-env confirm
-	gcloud config set project ${GOOGLE_CLOUD_PROJECT_NAME}
+	gcloud config set project ${GOOGLE_CLOUD_PROJECT_ID}
 	export $$(cat $(ENV_FILE) | xargs) && \
 	while IFS= read -r line; do export TF_VAR_$$line; done < $(ENV_FILE) && \
 	while IFS= read -r line; do export TF_VAR_$$line; done < $(SECRET_ENV_FILE) && \

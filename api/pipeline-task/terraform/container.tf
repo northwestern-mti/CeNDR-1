@@ -1,6 +1,6 @@
 locals {
     dockerfile_path = abspath("${path.module}/..")
-    container_tag = "gcr.io/${var.GOOGLE_CLOUD_PROJECT_NAME}/${var.MODULE_API_PIPELINE_TASK_CONTAINER_NAME}:${var.MODULE_API_PIPELINE_TASK_CONTAINER_VERSION}"
+    container_tag = "gcr.io/${var.GOOGLE_CLOUD_PROJECT_ID}/${var.MODULE_API_PIPELINE_TASK_CONTAINER_NAME}:${var.MODULE_API_PIPELINE_TASK_CONTAINER_VERSION}"
 }
 
 resource "null_resource" "build_container" {
